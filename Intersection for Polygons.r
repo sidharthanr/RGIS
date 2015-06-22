@@ -41,19 +41,14 @@ allCombs <- over(nhood,trtsel,returnList = T)
 
 allRslt <- {}
 for (iloop in (1:length(allCombs))){
-  print(iloop)
   soloShp <- nhood[iloop,]
   intList <- unlist(allCombs[iloop])
   for (jloop in (1:length(intList))){
     trtShp <- trtsel[intList[jloop],]
-    check1 <- (gDifference(soloShp,trtShp))
-#     plot(soloShp)
-    plot(check1)
-    plot(soloShp,add=T)
-    print("After check1")
-    check2 <- gArea(gDifference(soloShp,trtShp))
-    print("After check2")
-    temp <- (cbind(row.names(soloShp@data),row.names(trtShp@data),gArea(gDifference(soloShp,trtShp))))
+    shapeDiff <- (gDifference(soloShp,trtShp))
+    if(is.null(shapeDiff)){areaDiff <- gArea(soloShp) }
+    else{ areaDiff <- gArea(gDifference(soloShp,trtShp)) }
+    temp <- (cbind(row.names(soloShp@data),row.names(trtShp@data),areaDiff))
     allRslt <- rbind(allRslt,temp)
   }  
 }
@@ -65,3 +60,4 @@ setnames(allRsltDT,c("fPID","spID","combArea"))
 allRsltDT[,totArea := sum(combArea),by="fPID"]
 allRsltDT[,fracArea := combArea/totArea]
 
+                
