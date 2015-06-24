@@ -7,7 +7,7 @@ library(rgeos)
 # This function takes two SpatialPolygonDataFrames and returns the intersection 
 #area for the polygons of the first object
 
-getAreaIntersection <- function(spdf1,spdf2)
+getAreaIntersection <- function(spdf1,spdf2,varLst1,varLst2)
 {
   allCombs <- over(spdf1,spdf2,returnList = T)  
   allRslt <- {}
@@ -38,10 +38,25 @@ getAreaIntersection <- function(spdf1,spdf2)
     }
   }
   allRsltDT <- data.table(allRslt)
-  allRsltDT <- allRsltDT[,lapply(.SD,as.numeric)]
-  setnames(allRsltDT,c("fPID","spID","combArea"))
+  setnames(allRsltDT,c("fPID","sPID","combArea"))  
+  allRsltDT <- allRsltDT[,combArea:=as.numeric(combArea)]  
   allRsltDT[,totArea := sum(combArea),by="fPID"]
   allRsltDT[,fracArea := combArea/totArea]
+  
+  # merging other variables from the data frame using variables varLst1
+  if(!missing(varLst1)){
+    dt1 <- data.table(fPID=row.names(spdf1),data.table(spdf1@data)[,varLst1,with=FALSE]) 
+    setkey(dt1,fPID)
+    setkey(allRsltDT,fPID)
+    allRsltDT <- dt1[allRsltDT,]#merge(allRsltDT,dt1,by="fPID")
+  }
+  if(!missing(varLst2)){
+    dt2 <- data.table(sPID=row.names(spdf2),data.table(spdf2@data)[,varLst2,with=FALSE])
+    setkey(dt2,sPID)
+    setkey(allRsltDT,sPID)    
+    allRsltDT <- dt2[allRsltDT,] #merge(allRsltDT,dt2,by="sPID")
+  }
+  
   return(allRsltDT)
 }
 

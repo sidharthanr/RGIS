@@ -27,8 +27,8 @@ Neighborhoods <-spTransform(Neighborhoods,CRS("+proj=lcc +lat_1=34.0333333333333
 +y_0=500000.0000000001 +datum=NAD83 +units=us-ft +no_defs +ellps=GRS80 +towgs84=0,0,0"))
 
 
-system.time(  getMapping <- getAreaIntersection(Neighborhoods,tracts10))
-sum(getMapping$combArea)/gArea(Neighborhoods)
+system.time(  getMapping <- getAreaIntersection(tracts10,Neighborhoods,c("FEATURE_ID","TRACT_STR"),c("OBJECTID","S_HOOD")))
+sum(getMapping$combArea)/gArea(tracts10)
 
 # debug help below
 # sumstat  <- {}
