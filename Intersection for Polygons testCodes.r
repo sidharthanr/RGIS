@@ -1,6 +1,7 @@
 #Raghu Sidharthan - 6/22/2015
 #Call the intersection code and do checks to ensure consitent results
 source("C:\\Users\\sidharthanr\\Dropbox\\RGIS\\Intersection for Polygons.r")
+source("C:\\Users\\sidharthanr\\Dropbox\\RGIS\\Intersection for Polygons parallel.r")
 
 
 PrjDr <- "C:\\Users\\sidharthanr\\Dropbox\\Resource\\R\\GIS\\Seattle\\"
@@ -26,16 +27,8 @@ tracts10 <-spTransform(tracts10,CRS("+proj=lcc +lat_1=34.03333333333333 +lat_2=3
 Neighborhoods <-spTransform(Neighborhoods,CRS("+proj=lcc +lat_1=34.03333333333333 +lat_2=35.46666666666667 +lat_0=33.5 +lon_0=-118 +x_0=2000000
 +y_0=500000.0000000001 +datum=NAD83 +units=us-ft +no_defs +ellps=GRS80 +towgs84=0,0,0"))
 
+# getAreaIntersection  - normal implementation
+# getAreaIntersection  - parallel implementation
 
-system.time(  getMapping <- getAreaIntersection(tracts10,Neighborhoods,c("FEATURE_ID","TRACT_STR"),c("OBJECTID","S_HOOD")))
+system.time(  getMapping <- getAreaIntersectionPrl(tracts10,Neighborhoods,c("FEATURE_ID","TRACT_STR"),c("OBJECTID","S_HOOD")))
 sum(getMapping$combArea)/gArea(tracts10)
-
-# debug help below
-# sumstat  <- {}
-# for(i in 1:nrow(Neighborhoods))
-# {sumstat <- rbind(sumstat,gArea(Neighborhoods[i,]))}
-# check <- getMapping[,j=list(fArea=sum(combArea)),by=fPID]
-# check[,othWay:=sumstat]
-# docsv(check)
-
-
