@@ -33,7 +33,12 @@ getAreaIntersectionPrl <- function(spdf1,spdf2,varLst1,varLst2)
         temp <- (cbind(iloop,row.names(s1@data),row.names(s2@data),areaContribution))
         pllallRslt <- rbind(pllallRslt,temp)
       }
-      unAccountedShape <- gDifference(s1,gUnaryUnion(spdf2[intList,]))
+	  spdf2Union <- gUnaryUnion(spdf2[intList,])
+	  unAccountedShape <- try(gDifference(s1,spdf2Union), TRUE)
+	  if(class(unAccountedShape)=="try-error"){
+		spdf2Union <- gBuffer(spdf2Union, width = 0)
+		unAccountedShape <- gDifference(s1,spdf2Union)
+		}
       if(!is.null(unAccountedShape)){      unAccountedArea <- gArea(unAccountedShape) 
                                            if(unAccountedArea/s1Area>0.000001){
                                              pllallRslt <- rbind(pllallRslt,(cbind(iloop,row.names(s1@data),NA, unAccountedArea)))
